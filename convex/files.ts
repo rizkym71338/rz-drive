@@ -3,6 +3,14 @@ import { ConvexError, v } from 'convex/values'
 import { MutationCtx, QueryCtx, mutation, query } from './_generated/server'
 import { getUser } from './users'
 
+export const generateUploadUrl = mutation(async (ctx) => {
+  const identity = await ctx.auth.getUserIdentity()
+
+  if (!identity) throw new Error('you must be signed in to upload a file')
+
+  return await ctx.storage.generateUploadUrl()
+})
+
 const hassAccessToOrg = async (ctx: QueryCtx | MutationCtx, tokenIdentifier: string, orgId: string) => {
   const user = await getUser(ctx, tokenIdentifier)
 
@@ -12,7 +20,7 @@ const hassAccessToOrg = async (ctx: QueryCtx | MutationCtx, tokenIdentifier: str
 }
 
 export const createFile = mutation({
-  args: { name: v.string(), orgId: v.string() },
+  args: { name: v.string(), fileId: v.id('_storage'), orgId: v.string() },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity()
 
@@ -22,7 +30,7 @@ export const createFile = mutation({
 
     if (!hasAccess) throw new ConvexError('unauthorized')
 
-    await ctx.db.insert('files', args)
+    await ctx.db.insert('files', { name: args.name, fileId: args.fileId, orgId: args.orgId })
   },
 })
 

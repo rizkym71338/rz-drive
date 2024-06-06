@@ -2,7 +2,7 @@ import { Fragment, ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
 
-import { HeaderLayout } from '@/components'
+import { HeaderLayout, Toaster } from '@/components'
 
 interface RootLayoutProps {
   children: ReactNode
@@ -15,6 +15,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <Fragment>
       <HeaderLayout />
       {children}
+      <Toaster />
     </Fragment>
   )
 }
