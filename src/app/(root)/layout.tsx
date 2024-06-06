@@ -1,6 +1,8 @@
-import { ReactNode } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
+
+import { HeaderLayout } from '@/components'
 
 interface RootLayoutProps {
   children: ReactNode
@@ -9,5 +11,10 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   if (!auth().userId) redirect('/sign-in')
 
-  return children
+  return (
+    <Fragment>
+      <HeaderLayout />
+      {children}
+    </Fragment>
+  )
 }
